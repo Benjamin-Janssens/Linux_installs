@@ -1,0 +1,40 @@
+#Ubuntu 64 bit Linux Install via CLI, File permissions and media group creation
+-------------------------------------
+sudo apt update
+sudo apt upgrade
+sudo apt install curl sqlite3
+sudo apt install xvfb
+sudo adduser prowlarr
+sudo addgroup media
+sudo usermod -a -G media prowlarr
+cd /var/lib
+sudo mkdir prowlarr
+sudo chmod 774 /var/lib/prowlarr
+cd ~/Downloads
+wget --content-disposition 'http://prowlarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64' #Ensure the x64 tar file is downloaded not x86
+sudo tar -xvzf Prowlarr.master.1.13.3.4273.linux-core-x64.tar.gz -C /opt/
+sudo chown prowlarr:media -R /opt/Prowlarr
+sudo chmod 774 /opt/Prowlarr
+#Below is a script that needs to be copied, ignore parethesis
+(cat << EOF | sudo tee /etc/systemd/system/prowlarr.service > /dev/null
+[Unit]
+Description=Prowlarr Daemon
+After=syslog.target network.target
+[Service]
+User=prowlarr
+Group=prowlarr
+Type=simple
+
+ExecStart=/opt/Prowlarr/Prowlarr -nobrowser -data=/var/lib/prowlarr/
+TimeoutStopSec=20
+KillMode=process
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+EOF)
+sudo systemctl -q daemon-reload
+sudo systemctl enable --now -q prowlarr
+#Navigate to your loopback address followed by prowlarr port number, 9696 by default as below
+http://127.0.0.1:9696
+----------------------------
+#Flaresolverr may be needed for certain indexers ill include a flaresolverr tutorial in this repository
