@@ -1,0 +1,18 @@
+#ALFA AWUS036ACH Driver installaion for Kali linux(2024)
+-------------
+sudo apt update
+sudo apt upgrade -y
+sudo apt dist-upgrade -y
+sudo reboot now
+sudo apt update
+sudo apt install realtek-rtl88xxau-dkms
+sudo apt install dkms
+git clone https://github.com/aircrack-ng/rtl8812au
+cd rtl8812au/
+sudo apt-get install linux-headers-$(uname -r)
+make
+sudo make install
+lsusb
+iwconfig
+-------------
+#This should allow for the AWUS036ACH to be detectable via iwconfig on kali, allow a 20 second buffer after enabling input for the NIC for the iwconfig command to read the wireless adapter
